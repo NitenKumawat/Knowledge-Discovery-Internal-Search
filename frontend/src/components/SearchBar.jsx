@@ -44,7 +44,7 @@ export default function SearchBar({ onSearch, apiBase }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex gap-2 mb-4 flex-wrap">
+    <form onSubmit={handleSubmit} className="w-full flex gap-2 mb-4 flex-wrap justify-between">
 
       {/* Search */}
       <input

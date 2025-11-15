@@ -95,61 +95,20 @@ router.get('/search', async (req, res) => {
 router.get('/meta', async (req, res) => {
   try {
     const index = ingest.getMeiliClient().index('global_documents');
-    const docs = await index.getDocuments({ limit: 10000 });
+    const docs = await index.getDocuments({ limit: 1000 });
 
-    const allDocs = docs.results;
+    const companies = [...new Set(docs.results.map(d => d.company).filter(Boolean))];
 
-    // Unique company list
-    const companies = [
-      ...new Set(allDocs.map(d => d.company).filter(Boolean))
-    ];
+    const teams = docs.results
+      .map(d => ({ team: d.team, company: d.company }))
+      .filter(d => d.team);
 
-    // Teams grouped by company
-    const teamsByCompany = {};
-
-    allDocs.forEach(d => {
-      if (!d.company || !d.team) return;
-
-      if (!teamsByCompany[d.company]) {
-        teamsByCompany[d.company] = new Set();
-      }
-      teamsByCompany[d.company].add(d.team);
-    });
-
-    // Convert Set → Array
-    Object.keys(teamsByCompany).forEach(c => {
-      teamsByCompany[c] = [...teamsByCompany[c]];
-    });
-
-    // Projects grouped by team
-    const projectsByTeam = {};
-
-    allDocs.forEach(d => {
-      if (!d.team || !d.project) return;
-
-      if (!projectsByTeam[d.team]) {
-        projectsByTeam[d.team] = new Set();
-      }
-      projectsByTeam[d.team].add(d.project);
-    });
-
-    // Convert Set → Array
-    Object.keys(projectsByTeam).forEach(t => {
-      projectsByTeam[t] = [...projectsByTeam[t]];
-    });
-
-    res.json({
-      companies,
-      teamsByCompany,
-      projectsByTeam,
-      total: allDocs.length
-    });
+    res.json({ companies, teams, total: docs.results.length });
 
   } catch (err) {
     res.status(500).json({ ok: false, error: err.message });
   }
 });
-
 
 // -----------------------------
 // DELETE DOCUMENT (Meili + Disk)
