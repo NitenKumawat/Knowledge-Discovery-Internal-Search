@@ -4,7 +4,10 @@ const cors = require('cors');
 const routes = require('./routes');
 
 const app = express();
-app.use(cors());
+const cors = require('cors');
+app.use(cors({
+  origin: '*' 
+}));
 app.use(express.json());
 app.use('/api', routes);
 
