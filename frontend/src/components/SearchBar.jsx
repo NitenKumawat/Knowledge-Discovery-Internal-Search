@@ -37,17 +37,16 @@ export default function SearchBar({ onSearch, apiBase }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex gap-2 mb-4 flex-wrap">
-
-      {/* Search */}
+    <form onSubmit={handleSubmit} className="flex gap-2 mb-4  justify-between">
+   {/* Search */}
       <input
-        className="border p-2 rounded"
+        className="border p-2 rounded w-1/2"
         placeholder="Search"
         value={q}
         onChange={(e) => setQ(e.target.value)}
       />
-
-      {/* Company dropdown */}
+<div className=" flex flex-wrap  gap-2 justify-between">
+ {/* Company dropdown */}
       <select
         className="border p-2 rounded"
         value={company}
@@ -97,6 +96,10 @@ export default function SearchBar({ onSearch, apiBase }) {
         Search
       </button>
 
+</div>
+   
+
+     
     </form>
   );
 }
