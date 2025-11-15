@@ -7,8 +7,8 @@ const textParser = require('./parsers/textParser');
 const { v4: uuidv4 } = require('uuid');
 
 const client = new MeiliSearch({
-  host: process.env.MEILI_HOST || 'http://127.0.0.1:7700',
-  apiKey: process.env.MEILI_KEY || 'masterKey'
+  host: process.env.MEILI_HOST,
+  apiKey: process.env.MEILI_KEY
 });
 
 // Dynamic index naming
