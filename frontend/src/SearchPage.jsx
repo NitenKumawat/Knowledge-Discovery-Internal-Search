@@ -23,7 +23,6 @@ export default function SearchPage() {
     }
   };
 
-  // Load initial all documents + on pagination change
   useEffect(() => {
     fetchDocs({});
   }, [offset]);
@@ -31,25 +30,23 @@ export default function SearchPage() {
   return (
     <div className="p-4">
 
-      {/* ⬇️ IMPORTANT: pass apiBase */}
-      <SearchBar 
+      <SearchBar
         apiBase={apiBase}
         onSearch={(filters) => {
-          setOffset(0);   // reset pagination
+          setOffset(0);
           fetchDocs(filters);
-        }} 
+        }}
       />
 
-      {/* RESULTS */}
-      <ResultsList 
-        results={{ hits, total }} 
+      <ResultsList
+        apiBase={apiBase}   // <-- FIXED: MUST PASS THIS
+        results={{ hits, total }}
         onDelete={(id) => {
-          setHits(hits.filter(doc => doc.id !== id));
+          setHits(hits.filter(d => d.id !== id));
           setTotal(total - 1);
         }}
       />
 
-      {/* PAGINATION */}
       <div className="flex justify-between mt-4">
         <button
           disabled={offset === 0}

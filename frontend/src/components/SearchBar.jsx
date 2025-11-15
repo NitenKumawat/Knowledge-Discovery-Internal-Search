@@ -9,22 +9,17 @@ export default function SearchBar({ onSearch, apiBase }) {
   const [project, setProject] = useState("");
 
   const [companies, setCompanies] = useState([]);
-  const [teams, setTeams] = useState([]);
-  const [projects, setProjects] = useState([]);   // ✅ added
+  const [teamsByCompany, setTeamsByCompany] = useState({});
+  const [projectsByTeam, setProjectsByTeam] = useState({});
 
   // Load /meta
   useEffect(() => {
-    if (!apiBase) {
-      console.error("SearchBar missing apiBase prop");
-      return;
-    }
-
     const loadMeta = async () => {
       try {
         const res = await axios.get(`${apiBase}/meta`);
         setCompanies(res.data.companies || []);
-        setTeams(res.data.teams || []);
-        setProjects(res.data.projects || []);     // ✅ store project list
+        setTeamsByCompany(res.data.teamsByCompany || {});
+        setProjectsByTeam(res.data.projectsByTeam || {});
       } catch (err) {
         console.error("Meta load failed:", err);
       }
@@ -33,10 +28,8 @@ export default function SearchBar({ onSearch, apiBase }) {
     loadMeta();
   }, [apiBase]);
 
-  // Filter teams by company selected
-  const filteredTeams = company
-    ? teams.filter((t) => t.company === company)
-    : teams;
+  const teams = company ? (teamsByCompany[company] || []) : [];
+  const projects = team ? (projectsByTeam[team] || []) : [];
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -44,7 +37,7 @@ export default function SearchBar({ onSearch, apiBase }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="w-full flex gap-2 mb-4 flex-wrap justify-between">
+    <form onSubmit={handleSubmit} className="flex gap-2 mb-4 flex-wrap">
 
       {/* Search */}
       <input
@@ -60,14 +53,13 @@ export default function SearchBar({ onSearch, apiBase }) {
         value={company}
         onChange={(e) => {
           setCompany(e.target.value);
-          setTeam(""); // reset
+          setTeam("");
+          setProject("");
         }}
       >
         <option value="">All Companies</option>
         {companies.map((c, idx) => (
-          <option key={idx} value={c}>
-            {c}
-          </option>
+          <option key={idx} value={c}>{c}</option>
         ))}
       </select>
 
@@ -75,13 +67,15 @@ export default function SearchBar({ onSearch, apiBase }) {
       <select
         className="border p-2 rounded"
         value={team}
-        onChange={(e) => setTeam(e.target.value)}
+        onChange={(e) => {
+          setTeam(e.target.value);
+          setProject("");
+        }}
+        disabled={!company}
       >
         <option value="">All Teams</option>
-        {filteredTeams.map((t, idx) => (
-          <option key={idx} value={t.team}>
-            {t.team}
-          </option>
+        {teams.map((t, idx) => (
+          <option key={idx} value={t}>{t}</option>
         ))}
       </select>
 
@@ -90,12 +84,11 @@ export default function SearchBar({ onSearch, apiBase }) {
         className="border p-2 rounded"
         value={project}
         onChange={(e) => setProject(e.target.value)}
+        disabled={!team}
       >
         <option value="">All Projects</option>
         {projects.map((p, idx) => (
-          <option key={idx} value={p}>
-            {p}
-          </option>
+          <option key={idx} value={p}>{p}</option>
         ))}
       </select>
 

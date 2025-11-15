@@ -17,15 +17,14 @@ export default function ResultsList({ results, onDelete }) {
     return <div className="py-8 text-slate-500">Run a search to see results.</div>;
 
   // ----------- DELETE DOCUMENT ----------
-  const deleteDoc = async (id) => {
-    const ok = confirm("Delete this file permanently?");
-    if (!ok) return;
-
+ 
+  const handleDelete = async (id) => {
     try {
       await axios.delete(`${apiBase}/delete/${id}`);
-      onDelete(id); // notify parent so UI updates
+      onDelete(id);   // update UI
     } catch (err) {
-      alert("Failed to delete: " + err.message);
+      console.error("Delete failed:", err);
+      alert("Delete failed!");
     }
   };
 
@@ -75,12 +74,12 @@ export default function ResultsList({ results, onDelete }) {
                 Preview
               </button>
 
-              <button 
-                onClick={() => deleteDoc(hit.id)} 
-                className="px-2 py-1 border border-red-400 text-red-600 rounded hover:bg-red-50"
-              >
-                Delete
-              </button>
+            <button
+  onClick={() => handleDelete(hit.id)}
+  className="px-3 py-1 bg-red-500 text-white rounded"
+>
+  Delete
+</button>
             </div>
           </li>
         ))}
