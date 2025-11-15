@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import SearchBar from './components/SearchBar'
 import ResultsList from './components/ResultsList'
 import FileUploader from './components/FileUploader'
+import SearchPage from './SearchPage'
 
 
 export default function App() {
@@ -25,10 +26,8 @@ return (
 
 
 </div>
+<SearchPage/>
 
-
- <SearchBar onResults={setResults} />
-      <ResultsList results={results} />
 </main>
 </div>
 )
