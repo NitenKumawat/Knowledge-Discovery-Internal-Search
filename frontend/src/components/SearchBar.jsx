@@ -5,10 +5,10 @@ export default function SearchBar({ onResults }) {
   const [q,setQ]=useState("");
   const [company,setCompany]=useState("");
   const [team,setTeam]=useState("");
+const apiBase = import.meta.env.VITE_API_BASE;
 
  const handleSearch = async e => {
   e.preventDefault();
-  const apiBase = process.env.REACT_APP_API_BASE;
   const params = { q, company, team, limit: 20 };
 
   try {

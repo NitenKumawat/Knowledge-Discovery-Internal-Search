@@ -10,7 +10,8 @@ export default function FileUploader() {
   const [allTeams,setAllTeams]=useState([]);
   const [drag,setDrag]=useState(false);
   const [status,setStatus]=useState("");
-  const apiBase = process.env.REACT_APP_API_BASE;
+const apiBase = import.meta.env.VITE_API_BASE;
+
   useEffect(() => {
  
   axios.get(`${apiBase}/meta`).then(res => {

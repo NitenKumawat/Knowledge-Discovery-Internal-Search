@@ -10,7 +10,7 @@ import {
 
 export default function FilePreview({ doc, onClose }) {
   const { title, project, team, company, fileType, originalPath, content } = doc;
-const apiBase = process.env.REACT_APP_API_BASE.replace(/\/api$/, '');
+const apiBase = import.meta.env.VITE_API_BASE.replace(/\/api$/, '');
 
   const renderPreview = () => {
     if(['png','jpg','jpeg','gif','webp'].includes(fileType)) {
