@@ -6,12 +6,19 @@ export default function SearchBar({ onResults }) {
   const [company,setCompany]=useState("");
   const [team,setTeam]=useState("");
 
-  const handleSearch = async e=>{
-    e.preventDefault();
-    const params = { q, company, team, limit:20 };
-    const res = await axios.get("http://localhost:4000/api/search",{ params });
+ const handleSearch = async e => {
+  e.preventDefault();
+  const apiBase = process.env.REACT_APP_API_BASE;
+  const params = { q, company, team, limit: 20 };
+
+  try {
+    const res = await axios.get(`${apiBase}/search`, { params });
     onResults(res.data);
+  } catch (err) {
+    console.error("Search failed:", err);
   }
+};
+
 
   return (
     <form onSubmit={handleSearch} className="flex gap-2 mb-4">

@@ -10,22 +10,23 @@ import {
 
 export default function FilePreview({ doc, onClose }) {
   const { title, project, team, company, fileType, originalPath, content } = doc;
+const apiBase = process.env.REACT_APP_API_BASE.replace(/\/api$/, '');
 
   const renderPreview = () => {
     if(['png','jpg','jpeg','gif','webp'].includes(fileType)) {
-      return <img src={`http://localhost:4000${originalPath}`} alt={title} className="max-w-full max-h-[60vh] object-contain mx-auto" />;
+      return <img src={`${apiBase}${originalPath}`} alt={title} className="max-w-full max-h-[60vh] object-contain mx-auto" />;
     }
 
     if(['mp4','webm','mov'].includes(fileType)) {
-      return <video src={`http://localhost:4000${originalPath}`} controls className="max-w-full max-h-[60vh] mx-auto" />;
+      return <video src={`${apiBase}${originalPath}`} controls className="max-w-full max-h-[60vh] mx-auto" />;
     }
 
     if(['mp3','wav','ogg'].includes(fileType)) {
-      return <audio src={`http://localhost:4000${originalPath}`} controls className="w-full" />;
+      return <audio src={`${apiBase}${originalPath}`} controls className="w-full" />;
     }
 
     if(fileType === 'pdf') {
-      return <iframe src={`http://localhost:4000${originalPath}`} className="w-full h-[70vh]" title={title} />;
+      return <iframe src={`${apiBase}${originalPath}`} className="w-full h-[70vh]" title={title} />;
     }
 
     if(content && content.trim().length > 0) {
@@ -59,7 +60,7 @@ export default function FilePreview({ doc, onClose }) {
         </div>
 
         <div className="mt-6">
-          <a href={`http://localhost:4000${originalPath}`} target="_blank" rel="noreferrer" className="underline text-sky-600">
+          <a href={`${apiBase}${originalPath}`} target="_blank" rel="noreferrer" className="underline text-sky-600">
             Open full file
           </a>
         </div>

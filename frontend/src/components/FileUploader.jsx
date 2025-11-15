@@ -10,13 +10,16 @@ export default function FileUploader() {
   const [allTeams,setAllTeams]=useState([]);
   const [drag,setDrag]=useState(false);
   const [status,setStatus]=useState("");
-
-  useEffect(()=>{
-    axios.get("http://localhost:4000/api/meta").then(res=>{
-      setAllCompanies(res.data.companies || []);
-      setAllTeams(res.data.teams || []);
-    });
-  },[]);
+  const apiBase = process.env.REACT_APP_API_BASE;
+  useEffect(() => {
+ 
+  axios.get(`${apiBase}/meta`).then(res => {
+    setAllCompanies(res.data.companies || []);
+    setAllTeams(res.data.teams || []);
+  }).catch(err => {
+    console.error("Failed to fetch meta:", err);
+  });
+}, []);
 
   const filteredTeams = allTeams.filter(t=>t.company===company);
 
@@ -38,7 +41,7 @@ export default function FileUploader() {
 
     setStatus("Uploading & indexing...");
     try{
-      const res = await axios.post("http://localhost:4000/api/upload/bulk", form,{
+      const res =  await axios.post(`${apiBase}/upload/bulk`, form,{
         headers:{"Content-Type":"multipart/form-data"}
       });
       setStatus(`✔ Indexed ${res.data.count} files`);
