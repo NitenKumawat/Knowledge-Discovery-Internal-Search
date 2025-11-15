@@ -55,8 +55,8 @@ export default function FileUploader() {
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto bg-white p-6 rounded-2xl shadow-lg mt-10">
-      <h2 className="text-2xl font-bold mb-4">Upload Marketing Documents</h2>
+    <div className="p-4">
+       <h2 className="text-2xl font-bold mb-4">Upload Marketing Documents</h2>
 
       <input
         list="companyList"

@@ -6,7 +6,8 @@ import ResultsList from "./components/ResultsList";
 export default function SearchPage() {
   const [hits, setHits] = useState([]);
   const [total, setTotal] = useState(0);
-  const [limit] = useState(20);
+ const [limit] = useState(10);
+
   const [offset, setOffset] = useState(0);
 
   const apiBase = import.meta.env.VITE_API_BASE;

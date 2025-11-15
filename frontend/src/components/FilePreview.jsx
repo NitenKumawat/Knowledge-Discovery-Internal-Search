@@ -25,9 +25,22 @@ const apiBase = import.meta.env.VITE_API_BASE.replace(/\/api$/, '');
       return <audio src={`${apiBase}${originalPath}`} controls className="w-full" />;
     }
 
-    if(fileType === 'pdf') {
-      return <iframe src={`${apiBase}${originalPath}`} className="w-full h-[70vh]" title={title} />;
-    }
+   if (fileType === 'pdf') {
+  return (
+    <div>
+      {/* PDF Viewer */}
+    
+
+      {/* Extracted Text */}
+      {content && (
+        <div className="mt-4 p-3 bg-gray-100 rounded max-h-[40vh] overflow-auto text-sm whitespace-pre-wrap">
+          {content}
+        </div>
+      )}
+    </div>
+  );
+}
+
 
     if(content && content.trim().length > 0) {
       return <div className="whitespace-pre-wrap text-sm text-slate-800 max-h-[60vh] overflow-auto">{content}</div>;
