@@ -1,0 +1,36 @@
+version: '3.9'
+
+services:
+  meilisearch:
+    image: getmeili/meilisearch:v1.2
+    container_name: meilisearch
+    ports:
+      - "7700:7700"
+    environment:
+      MEILI_MASTER_KEY: Z6Tfq9-oUySAAm7n0iI5jbc3XJuAEUIjnxouEySYfI8
+    volumes:
+      - meili_data:/meili_data
+
+  backend:
+    build: ./backend
+    container_name: internal-search-backend
+    ports:
+      - "4000:4000"
+    environment:
+      MEILI_HOST: http://meilisearch:7700
+      MEILI_KEY: Z6Tfq9-oUySAAm7n0iI5jbc3XJuAEUIjnxouEySYfI8
+    depends_on:
+      - meilisearch
+    volumes:
+      - ./backend/uploads:/app/uploads
+
+  frontend:
+    build: ./frontend
+    container_name: internal-search-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+volumes:
+  meili_data:
