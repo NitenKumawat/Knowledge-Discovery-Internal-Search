@@ -4,7 +4,6 @@ import FileUploader from "./components/FileUploader";
 
 export default function App() {
   const MEILI_DASHBOARD = import.meta.env.VITE_MEILI_HOST;
-  // example: http://127.0.0.1:7700
 
   return (
     <div className="min-h-screen py-10 bg-gradient-to-r from-red-300 to-green-300">
@@ -32,7 +31,7 @@ export default function App() {
           Open Meilisearch Dashboard
         </a>
       </div>
-
+     
       <main className="max-w-5xl mx-auto space-y-6">
         <FileUploader />
         <SearchPage />
