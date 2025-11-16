@@ -35,21 +35,49 @@ This README is written professionally for your GitHub repository.
 
 ```
 project/
-│── backend/
-│   ├── routes/
-│   ├── controllers/
-│   ├── utils/
-│   ├── upload/         ← uploaded files
-│   ├── indexer.js
-│   └── server.js
-│
-│── frontend/
-│   ├── src/components/
-│   ├── src/pages/
-│   └── vite.config.js
-│
-│── docker-compose.yml
-│── README.md
+┣ 📂backend
+┃ ┣ 📂src
+┃ ┃ ┣ 📂parsers
+┃ ┃ ┃ ┣ 📜docxParser.js
+┃ ┃ ┃ ┣ 📜pdfParser.js
+┃ ┃ ┃ ┗ 📜textParser.js
+┃ ┃ ┣ 📜ingest.js
+┃ ┃ ┣ 📜routes.js
+┃ ┃ ┗ 📜server.js
+┃ ┣ 📜.env
+┃ ┣ 📜.gitignore
+┃ ┣ 📜Dockerfile
+┃ ┗ 📜package.json
+┃
+┣ 📂frontend
+┃ ┣ 📂public
+┃ ┣ 📂src
+┃ ┃ ┣ 📂assets
+┃ ┃ ┣ 📂components
+┃ ┃ ┃ ┣ 📜FilePreview.jsx
+┃ ┃ ┃ ┣ 📜FileUploader.jsx
+┃ ┃ ┃ ┣ 📜ResultsList.jsx
+┃ ┃ ┃ ┗ 📜SearchBar.jsx
+┃ ┃ ┣ 📂lib
+┃ ┃ ┃ ┗ 📜utils.js
+┃ ┃ ┣ 📜App.jsx
+┃ ┃ ┣ 📜index.css
+┃ ┃ ┣ 📜main.jsx
+┃ ┃ ┗ 📜SearchPage.jsx
+┃ ┣ 📜.env
+┃ ┣ 📜.gitignore
+┃ ┣ 📜components.json
+┃ ┣ 📜Dockerfile
+┃ ┣ 📜eslint.config.js
+┃ ┣ 📜index.html
+┃ ┣ 📜jsconfig.json
+┃ ┣ 📜package.json
+┃ ┣ 📜README.md
+┃ ┗ 📜vite.config.js
+┃
+┣ 📜docker-compose.yml
+┗ 📜README.md
+
 ```
 
 ---
@@ -58,39 +86,43 @@ project/
 
 Below is the **complete docker-compose.yml** that starts your backend + Meilisearch + optional frontend.
 
-```yamlersion: "3.9"
+```version: '3.9'
+
 services:
   meilisearch:
-    image: getmeili/meilisearch:latest
-    container_name: meili
-    environment:
-      MEILI_MASTER_KEY: "MASTER_KEY_123"
+    image: getmeili/meilisearch:v1.2
+    container_name: meilisearch
     ports:
       - "7700:7700"
+    environment:
+      MEILI_MASTER_KEY: Z6Tfq9-oUySAAm7n0iI5jbc3XJuAEUIjnxouEySYfI8
     volumes:
-      - ./meili_data:/meili_data
+      - meili_data:/meili_data
 
   backend:
     build: ./backend
-    container_name: backend
-    environment:
-      PORT: 5000
-      MEILI_URL: http://meilisearch:7700
-      MEILI_MASTER_KEY: MASTER_KEY_123
+    container_name: internal-search-backend
     ports:
-      - "5000:5000"
+      - "4000:4000"
+    environment:
+      MEILI_HOST: http://meilisearch:7700
+      MEILI_KEY: Z6Tfq9-oUySAAm7n0iI5jbc3XJuAEUIjnxouEySYfI8
     depends_on:
       - meilisearch
     volumes:
-      - ./backend:/app
+      - ./backend/uploads:/app/uploads
 
   frontend:
     build: ./frontend
-    container_name: frontend
+    container_name: internal-search-frontend
     ports:
-      - "5173:5173"
-    volumes:
-      - ./frontend:/app
+      - "3000:80"
+    depends_on:
+      - backend
+
+volumes:
+  meili_data:
+
 ```
 
 ### ▶ Start the whole project
@@ -101,8 +133,8 @@ docker compose up --build
 
 ### Services will run on:
 
-* **Frontend:** [http://localhost:5173](http://localhost:5173)
-* **Backend:** [http://localhost:5000](http://localhost:5000)
+* **Frontend:** [http://localhost:5173](http://localhost:3000)
+* **Backend:** [http://localhost:4000](http://localhost:4000)
 * **Meilisearch Dashboard:** [http://localhost:7700](http://localhost:7700)
 
 ---
@@ -119,28 +151,42 @@ npm install
 ### Create `.env`
 
 ```
-PORT=5000
+PORT=4000
 MEILI_URL=http://127.0.0.1:7700
 MEILI_MASTER_KEY=MASTER_KEY_123
-UPLOAD_DIR=./uploads
+
 ```
 
 ### Start server
 
 ```sh
-npm start
+node src/server.js
 ```
 
 ---
 
 # 🌐 Frontend Setup (Without Docker)
 
+
+### Install dependencies
+
 ```sh
 cd frontend
 npm install
-npm run dev
+```
+### Create `.env`
+
+```
+VITE_API_BASE=http://localhost:4000
+VITE_MEILI_HOST=VITE_MEILI_HOST=http://localhost:7700
+
 ```
 
+### Start server
+
+```sh
+npm run dev
+```
 ---
 
 # 🧠 Architecture & Workflow
@@ -283,8 +329,4 @@ Open PRs, issues, enhancements.
 
 If you want, I can also:
 
-* Add a **backend folder README**
-* Add **API docs** (Swagger)
-* Add **ER diagram**
-* Add **system architecture diagram**
-* Add production deployment guide (NGINX + PM2 + Docker)
+
