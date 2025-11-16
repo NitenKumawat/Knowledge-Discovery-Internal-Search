@@ -4,7 +4,7 @@
 
 This repository contains a **full‑stack AI-powered document search system** built using **React**, **Node.js/Express**, **Meilisearch**, and **Docker Compose**. Users can upload files, index them, preview them (PDF, images, audio, video, text), search through extracted text, and filter by **company, team, and project**.
 
-This README is written professionally for your GitHub repository.
+
 
 ---
 
