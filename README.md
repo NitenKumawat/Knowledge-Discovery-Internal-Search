@@ -31,6 +31,7 @@ This README is written professionally for your GitHub repository.
 
 ---
 
+
 # 📂 Project Structure
 
 ```
@@ -322,6 +323,25 @@ MIT License
 Open PRs, issues, enhancements.
 
 ---
+
+
+# 🚀 Live Demo (Deployed)
+
+The full Knowledge Search system is deployed and accessible online:
+
+### 🔍 Frontend (React UI)
+👉 https://knowledge-discovery-internal-search.vercel.app/
+
+
+
+---
+
+### ✨ Quick Access Buttons
+
+[🌐 Live Frontend](https://your-frontend-domain.com)  
+
+
+
 
 # 📬 Contact
 
