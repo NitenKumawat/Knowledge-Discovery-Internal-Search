@@ -1,18 +1,15 @@
-const express = require('express');
-const multer = require('multer');
-const path = require('path');
-const ingest = require('./ingest');
+const express = require("express");
+const multer = require("multer");
+const path = require("path");
+const ingest = require("./ingest");
 
 const router = express.Router();
-const upload = multer({ dest: path.join(__dirname, 'uploads') });
+const upload = multer({ dest: path.join(__dirname, "uploads") });
 
 // Serve uploads publicly
-router.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+router.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// -----------------------------
-// Single Upload
-// -----------------------------
-router.post('/upload', upload.single('file'), async (req, res) => {
+router.post("/upload", upload.single("file"), async (req, res) => {
   try {
     const { company, team, project } = req.body;
 
@@ -20,20 +17,16 @@ router.post('/upload', upload.single('file'), async (req, res) => {
       originalName: req.file.originalname,
       company,
       team,
-      project
+      project,
     });
 
     res.json({ ok: true, doc });
-
   } catch (err) {
     res.status(500).json({ ok: false, error: err.message });
   }
 });
 
-// -----------------------------
-// Bulk Upload
-// -----------------------------
-router.post('/upload/bulk', upload.array('files'), async (req, res) => {
+router.post("/upload/bulk", upload.array("files"), async (req, res) => {
   try {
     const { company, team, project } = req.body;
     const results = [];
@@ -43,24 +36,27 @@ router.post('/upload/bulk', upload.array('files'), async (req, res) => {
         originalName: f.originalname,
         company,
         team,
-        project
+        project,
       });
       results.push(doc);
     }
 
     res.json({ ok: true, count: results.length, docs: results });
-
   } catch (err) {
     res.status(500).json({ ok: false, error: err.message });
   }
 });
 
-// -----------------------------
-// Search
-// -----------------------------
-router.get('/search', async (req, res) => {
+router.get("/search", async (req, res) => {
   try {
-    const { q = "", company, team, project, limit = 20, offset = 0 } = req.query;
+    const {
+      q = "",
+      company,
+      team,
+      project,
+      limit = 20,
+      offset = 0,
+    } = req.query;
 
     const indexName = ingest.getIndexName(company, team);
     const index = ingest.getMeiliClient().index(indexName);
@@ -73,7 +69,7 @@ router.get('/search', async (req, res) => {
     const results = await index.search(q, {
       limit: Number(limit),
       offset: Number(offset),
-      filter: filters.length ? filters.join(" AND ") : undefined
+      filter: filters.length ? filters.join(" AND ") : undefined,
     });
 
     res.json({
@@ -81,33 +77,29 @@ router.get('/search', async (req, res) => {
       hits: results.hits,
       total: results.estimatedTotalHits,
       limit: Number(limit),
-      offset: Number(offset)
+      offset: Number(offset),
     });
-
   } catch (err) {
     res.status(500).json({ ok: false, error: err.message });
   }
 });
 
-// -----------------------------
-// META — used for dropdowns
-// -----------------------------
-router.get('/meta', async (req, res) => {
+router.get("/meta", async (req, res) => {
   try {
-    const index = ingest.getMeiliClient().index('global_documents');
+    const index = ingest.getMeiliClient().index("global_documents");
     const docs = await index.getDocuments({ limit: 10000 });
 
     const allDocs = docs.results;
 
     // Unique company list
     const companies = [
-      ...new Set(allDocs.map(d => d.company).filter(Boolean))
+      ...new Set(allDocs.map((d) => d.company).filter(Boolean)),
     ];
 
     // Teams grouped by company
     const teamsByCompany = {};
 
-    allDocs.forEach(d => {
+    allDocs.forEach((d) => {
       if (!d.company || !d.team) return;
 
       if (!teamsByCompany[d.company]) {
@@ -117,14 +109,14 @@ router.get('/meta', async (req, res) => {
     });
 
     // Convert Set → Array
-    Object.keys(teamsByCompany).forEach(c => {
+    Object.keys(teamsByCompany).forEach((c) => {
       teamsByCompany[c] = [...teamsByCompany[c]];
     });
 
     // Projects grouped by team
     const projectsByTeam = {};
 
-    allDocs.forEach(d => {
+    allDocs.forEach((d) => {
       if (!d.team || !d.project) return;
 
       if (!projectsByTeam[d.team]) {
@@ -134,7 +126,7 @@ router.get('/meta', async (req, res) => {
     });
 
     // Convert Set → Array
-    Object.keys(projectsByTeam).forEach(t => {
+    Object.keys(projectsByTeam).forEach((t) => {
       projectsByTeam[t] = [...projectsByTeam[t]];
     });
 
@@ -142,24 +134,19 @@ router.get('/meta', async (req, res) => {
       companies,
       teamsByCompany,
       projectsByTeam,
-      total: allDocs.length
+      total: allDocs.length,
     });
-
   } catch (err) {
     res.status(500).json({ ok: false, error: err.message });
   }
 });
 
-
-// -----------------------------
-// DELETE DOCUMENT (Meili + Disk)
-// -----------------------------
-router.delete('/delete/:id', async (req, res) => {
+router.delete("/delete/:id", async (req, res) => {
   try {
     const docId = req.params.id;
 
     // Fetch original doc (always in global index)
-    const globalIndex = ingest.getMeiliClient().index('global_documents');
+    const globalIndex = ingest.getMeiliClient().index("global_documents");
     const doc = await globalIndex.getDocument(docId);
 
     if (!doc) {
@@ -175,7 +162,6 @@ router.delete('/delete/:id', async (req, res) => {
     }
 
     res.json({ ok: true, deleted: docId });
-
   } catch (err) {
     res.status(500).json({ ok: false, error: err.message });
   }

@@ -6,8 +6,7 @@ import ResultsList from "./components/ResultsList";
 export default function SearchPage() {
   const [hits, setHits] = useState([]);
   const [total, setTotal] = useState(0);
- const [limit] = useState(10);
-
+  const [limit] = useState(10);
   const [offset, setOffset] = useState(0);
 
   const apiBase = import.meta.env.VITE_API_BASE;
@@ -29,8 +28,7 @@ export default function SearchPage() {
   }, [offset]);
 
   return (
-    <div className="p-4">
-
+    <div className="p-4 rounded-2xl shadow-xl backdrop-blur-xl bg-white/20 border border-white/30">
       <SearchBar
         apiBase={apiBase}
         onSearch={(filters) => {
@@ -40,10 +38,10 @@ export default function SearchPage() {
       />
 
       <ResultsList
-        apiBase={apiBase}   // <-- FIXED: MUST PASS THIS
+        apiBase={apiBase}
         results={{ hits, total }}
         onDelete={(id) => {
-          setHits(hits.filter(d => d.id !== id));
+          setHits(hits.filter((d) => d.id !== id));
           setTotal(total - 1);
         }}
       />
@@ -69,7 +67,6 @@ export default function SearchPage() {
       <p className="text-sm text-gray-600 mt-2">
         Showing {offset + 1} – {Math.min(offset + limit, total)} of {total}
       </p>
-
     </div>
   );
 }

@@ -1,31 +1,42 @@
-import React, { useState } from 'react'
-import SearchBar from './components/SearchBar'
-import ResultsList from './components/ResultsList'
-import FileUploader from './components/FileUploader'
-import SearchPage from './SearchPage'
-
+import React, { useState } from "react";
+import SearchPage from "./SearchPage";
+import FileUploader from "./components/FileUploader";
 
 export default function App() {
-const [query, setQuery] = useState('')
-const [results, setResults] = useState(null)
+  const MEILI_DASHBOARD = import.meta.env.VITE_MEILI_HOST;
+  // example: http://127.0.0.1:7700
 
+  return (
+    <div className="min-h-screen py-10 bg-gradient-to-r from-red-300 to-green-300">
+      <div className="max-w-5xl mx-auto space-y-6 my-8 flex flex-col items-center text-center">
+        {/* 🏷 TITLE */}
+        <h1 className="text-4xl font-extrabold bg-gradient-to-r from-blue-700 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+          Knowledge Discovery — Internal Search
+        </h1>
 
-return (
-<div className="min-h-screen py-10 bg-linear-to-r  from-red-300 to-green-300   ">
-<di className="max-w-5xl mx-auto space-y-6 flex flex-col justify-center  my-8 ">
-<h1 className="text-3xl font-bold mb-4">Knowledge Discovery — Internal Search</h1>
-<p className="text-sm text-slate-600 mb-6">Fast search across marketing docs and assets.</p>
-</di>
+        {/* ⭐ SUBTITLE */}
+        <p className="text-md text-slate-700 font-medium">
+          Fast smart-search across your organization’s files & documents.
+        </p>
 
+        {/* LINE */}
+        <hr className="w-1/2 border-slate-500/40 my-4" />
 
-<main className="max-w-5xl mx-auto space-y-6">
-   
-<FileUploader />
+        {/* 🔘 OPEN MEILISEARCH BUTTON */}
+        <a
+          href={MEILI_DASHBOARD}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="px-5 py-2 bg-black text-white rounded-lg shadow-lg hover:bg-gray-800 transition"
+        >
+          Open Meilisearch Dashboard
+        </a>
+      </div>
 
-
-<SearchPage/>
-
-</main>
-</div>
-)
+      <main className="max-w-5xl mx-auto space-y-6">
+        <FileUploader />
+        <SearchPage />
+      </main>
+    </div>
+  );
 }

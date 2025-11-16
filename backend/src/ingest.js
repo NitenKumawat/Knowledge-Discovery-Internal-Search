@@ -1,19 +1,27 @@
-const fs = require('fs');
-const path = require('path');
-const { MeiliSearch } = require('meilisearch');
-const pdfParser = require('./parsers/pdfParser');
-const docxParser = require('./parsers/docxParser');
-const textParser = require('./parsers/textParser');
-const { v4: uuidv4 } = require('uuid');
+const fs = require("fs");
+const path = require("path");
+const { MeiliSearch } = require("meilisearch");
+const pdfParser = require("./parsers/pdfParser");
+const docxParser = require("./parsers/docxParser");
+const textParser = require("./parsers/textParser");
+const { v4: uuidv4 } = require("uuid");
 
 const client = new MeiliSearch({
   host: process.env.MEILI_HOST,
-  apiKey: process.env.MEILI_KEY
+  apiKey: process.env.MEILI_KEY,
 });
+
+function ensureUploadsFolder() {
+  const uploadDir = path.join(process.cwd(), "uploads");
+  if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+  }
+  return uploadDir;
+}
 
 // Dynamic index naming
 function getIndexName(company, team) {
-  if (!company) return 'global_documents';
+  if (!company) return "global_documents";
   if (!team) return `company_${company}`;
   return `company_${company}_team_${team}`;
 }
@@ -23,46 +31,44 @@ async function ensureIndex(indexName) {
   try {
     await client.getIndex(indexName);
   } catch {
-    await client.createIndex(indexName, { primaryKey: 'id' });
+    await client.createIndex(indexName, { primaryKey: "id" });
   }
 
-  await client.index(indexName).updateFilterableAttributes([
-    'company',
-    'team',
-    'fileType',
-    'project'
-  ]);
+  await client
+    .index(indexName)
+    .updateFilterableAttributes(["company", "team", "fileType", "project"]);
 
-  await client.index(indexName).updateSearchableAttributes([
-    'title',
-    'content',
-    'project'
-  ]);
+  await client
+    .index(indexName)
+    .updateSearchableAttributes(["title", "content", "project"]);
 }
 
-// Parse & Index single file
 async function parseAndIndex(filePath, meta = {}) {
   const { originalName, company, team, project } = meta;
-  const indexes = ['global_documents']; // always global
+
+  // 🔥 Ensure uploads folder exists every time
+  ensureUploadsFolder();
+
+  const indexes = ["global_documents"]; // always global
   if (company) indexes.push(getIndexName(company, team));
 
   const ext = path.extname(originalName).toLowerCase();
-  let parsed = { text: '', title: originalName };
+  let parsed = { text: "", title: originalName };
 
-  if (ext === '.pdf') parsed = await pdfParser(filePath);
-  else if (ext === '.docx') parsed = await docxParser(filePath);
+  if (ext === ".pdf") parsed = await pdfParser(filePath);
+  else if (ext === ".docx") parsed = await docxParser(filePath);
   else parsed = await textParser(filePath);
 
   const doc = {
     id: uuidv4(),
     company,
     team,
-    project: project || 'general',
+    project: project || "general",
     title: parsed.title || originalName,
     content: parsed.text.substring(0, 200000),
-    fileType: ext.replace('.', ''),
+    fileType: ext.replace(".", ""),
     uploadedAt: new Date().toISOString(),
-    originalPath: `/uploads/${path.basename(filePath)}`
+    originalPath: `/uploads/${path.basename(filePath)}`,
   };
 
   for (const idx of indexes) {
@@ -72,10 +78,6 @@ async function parseAndIndex(filePath, meta = {}) {
 
   return doc;
 }
-
-// ---------------------------
-// DELETE FUNCTIONS
-// ---------------------------
 
 // Delete doc from all Meilisearch indexes
 async function deleteDocument(docId) {
@@ -90,7 +92,7 @@ async function deleteDocument(docId) {
 
 // Delete physical file
 function deleteFile(relativePath) {
-  const full = path.join(__dirname, relativePath);
+  const full = path.join(process.cwd(), relativePath);
 
   if (fs.existsSync(full)) {
     fs.unlinkSync(full);
@@ -102,5 +104,5 @@ module.exports = {
   getMeiliClient: () => client,
   getIndexName,
   deleteDocument,
-  deleteFile
+  deleteFile,
 };

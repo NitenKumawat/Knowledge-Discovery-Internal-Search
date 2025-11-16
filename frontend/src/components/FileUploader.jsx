@@ -19,9 +19,7 @@ export default function FileUploader() {
         setAllCompanies(res.data.companies || []);
         setAllTeams(res.data.teams || []);
       })
-      .catch((err) => {
-        console.error("Failed to fetch meta:", err);
-      });
+      .catch((err) => console.error("Failed to fetch meta:", err));
   }, []);
 
   const filteredTeams = allTeams.filter((t) => t.company === company);
@@ -55,15 +53,25 @@ export default function FileUploader() {
   };
 
   return (
-    <div className="p-4">
-       <h2 className="text-2xl font-bold mb-4">Upload Marketing Documents</h2>
+    <div
+      className="
+        p-6 rounded-2xl shadow-xl 
+        bg-white/20 backdrop-blur-lg 
+        border border-white/30 
+        max-w-3xl mx-auto 
+        glass-card
+      "
+    >
+      <h2 className="text-2xl font-bold mb-4 text-white drop-shadow-md">
+        Upload Marketing Documents
+      </h2>
 
       <input
         list="companyList"
         value={company}
         onChange={(e) => setCompany(e.target.value)}
         placeholder="Company"
-        className="w-full p-3 border rounded mb-3"
+        className="w-full p-3 border rounded mb-3 bg-white/50 backdrop-blur-md"
       />
       <datalist id="companyList">
         {allCompanies.map((c, i) => (
@@ -76,7 +84,7 @@ export default function FileUploader() {
         value={team}
         onChange={(e) => setTeam(e.target.value)}
         placeholder="Team"
-        className="w-full p-3 border rounded mb-3"
+        className="w-full p-3 border rounded mb-3 bg-white/50 backdrop-blur-md"
       />
       <datalist id="teamList">
         {filteredTeams.map((t, i) => (
@@ -89,7 +97,7 @@ export default function FileUploader() {
         value={project}
         onChange={(e) => setProject(e.target.value)}
         placeholder="Project / Topic"
-        className="w-full p-3 border rounded mb-3"
+        className="w-full p-3 border rounded mb-3 bg-white/50 backdrop-blur-md"
       />
 
       <div
@@ -99,15 +107,21 @@ export default function FileUploader() {
         }}
         onDragLeave={() => setDrag(false)}
         onDrop={handleDrop}
-        className={`h-40 border-2 border-dashed rounded-xl flex items-center justify-center ${
-          drag ? "border-blue-600 bg-blue-50" : "border-gray-300 bg-gray-100"
-        }`}
+        className={`
+          h-40 border-2 border-dashed rounded-xl flex items-center justify-center transition 
+          ${
+            drag
+              ? "border-blue-600 bg-blue-200/30"
+              : "border-white/40 bg-white/30"
+          } 
+          backdrop-blur-md
+        `}
       >
-        <div className="text-center">
+        <div className="text-center text-black">
           <p className="text-sm">Drag & Drop files here</p>
           <label
             htmlFor="fileInput"
-            className="text-blue-600 underline cursor-pointer"
+            className="text-blue-400 underline cursor-pointer"
           >
             or click to browse
           </label>
@@ -124,7 +138,7 @@ export default function FileUploader() {
       </div>
 
       {files.length > 0 && (
-        <div className="mt-4 p-3 border rounded bg-gray-50">
+        <div className="mt-4 p-3 border rounded bg-white/30 backdrop-blur-md text-white">
           {files.map((f, i) => (
             <p key={i}>{f.name}</p>
           ))}
@@ -133,11 +147,12 @@ export default function FileUploader() {
 
       <button
         onClick={handleUpload}
-        className="mt-5 w-full py-3 bg-blue-600 text-white rounded hover:bg-blue-700"
+        className="mt-5 w-full py-3 bg-blue-600/80 hover:bg-blue-700/90 text-white rounded backdrop-blur-md"
       >
         Upload & Index
       </button>
-      <p className="mt-3 text-sm text-gray-700">{status}</p>
+
+      <p className="mt-3 text-sm text-white drop-shadow-md">{status}</p>
     </div>
   );
 }
