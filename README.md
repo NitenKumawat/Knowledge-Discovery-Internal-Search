@@ -329,16 +329,13 @@ Open PRs, issues, enhancements.
 
 The full Knowledge Search system is deployed and accessible online:
 
-### 🔍 Frontend (React UI)
-👉 https://knowledge-discovery-internal-search.vercel.app/
+[🌐 Live Frontend]( https://knowledge-discovery-internal-search.vercel.app/)  
 
+[🌐 Demo video]( https://knowledge-discovery-internal-search.vercel.app/)  
 
 
 ---
 
-### ✨ Quick Access Buttons
-
-[🌐 Live Frontend](https://your-frontend-domain.com)  
 
 
 
@@ -347,6 +344,6 @@ The full Knowledge Search system is deployed and accessible online:
 
 **Developer:** Niten Kumawat
 
-If you want, I can also:
+
 
 
